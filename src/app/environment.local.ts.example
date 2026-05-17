@@ -1,0 +1,9 @@
+/**
+ * Copy to environment.local.ts and fill in your Wheatley HOSTING credentials.
+ * Do NOT submit this file with real passwords to ClickUP.
+ *
+ * This is your uXXXXXXXX Wheatley/CS account — NOT atc_admin / passenger1.
+ */
+export const wheatleyUser = 'u25009801';
+export const wheatleyPass = 'your_wheatley_password_here';
+export const wheatleyPath = '/u25009801/public_html/api';

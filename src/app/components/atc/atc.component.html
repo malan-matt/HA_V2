@@ -1,0 +1,115 @@
+<div class="atc-layout">
+  <aside class="sidebar">
+    <header class="sidebar-header">
+      <div class="user-info">
+        <span class="role-badge atc">ATC</span>
+        <span class="username">{{ auth.user?.username }}</span>
+      </div>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </header>
+
+    <div class="error-msg" *ngIf="errorMessage" role="alert">⚠ {{ errorMessage }}</div>
+
+    <div class="info-msg" *ngIf="infoMessage" role="status">ℹ {{ infoMessage }}</div>
+
+    <section class="section">
+      <h2 class="section-title">All Flights</h2>
+      <div class="loading" *ngIf="loading">Loading flights...</div>
+      <div class="flight-filters">
+        <button
+          class="filter-btn"
+          [class.active]="activeFilter === 'All'"
+          (click)="setFilter('All')"
+        >
+          All
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="activeFilter === 'Scheduled'"
+          (click)="setFilter('Scheduled')"
+        >
+          Scheduled
+        </button>
+        <button
+          class="filter-btn"
+          [class.active]="activeFilter === 'Active'"
+          (click)="setFilter('Active')"
+        >
+          Active
+        </button>
+      </div>
+      <ul class="flight-list" *ngIf="!loading">
+        <li
+          *ngFor="let flight of filteredFlights"
+          (click)="selectFlight(flight)"
+          [class.selected]="selectedFlight?.id === flight.id"
+        >
+          <div class="flight-number">{{ flight.flight_number }}</div>
+          <div class="flight-route">{{ flight.origin?.code }} → {{ flight.destination?.code }}</div>
+          <div class="flight-status" [class]="getFlightStatusClass(flight.status)">
+            {{ flight.status }}
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" *ngIf="selectedFlight">
+      <h2 class="section-title">Flight Actions</h2>
+      <div class="flight-details">
+        <div class="detail-row">
+          <span class="label">Flight:</span>
+          <span class="value">{{ selectedFlight.flight_number }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Route:</span>
+          <span class="value"
+            >{{ selectedFlight.origin?.code }} → {{ selectedFlight.destination?.code }}</span
+          >
+        </div>
+        <div class="detail-row">
+          <span class="label">Status:</span>
+          <span class="value" [class]="getFlightStatusClass(selectedFlight.status)">
+            {{ selectedFlight.status }}
+          </span>
+        </div>
+        <div class="button-group">
+          <button
+            class="dispatch-btn"
+            (click)="dispatchFlight()"
+            [disabled]="!canDispatch(selectedFlight) || dispatching"
+          >
+            {{ dispatching ? 'Dispatching...' : 'Dispatch Flight' }}
+          </button>
+          <button class="track-btn" (click)="trackFlight()">Track Flight</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" *ngIf="selectedFlight">
+      <h2 class="section-title">Passengers</h2>
+      <div class="loading" *ngIf="loadingPassengers">Loading passengers...</div>
+      <ul class="passenger-list" *ngIf="!loadingPassengers && passengers.length">
+        <li *ngFor="let p of passengers" [class.confirmed]="p.boarding_confirmed">
+          <span class="p-user">{{ p.username }}</span>
+          <span class="p-seat" *ngIf="p.seat_number">Seat {{ p.seat_number }}</span>
+          <span class="p-status">{{ p.boarding_confirmed ? 'Confirmed' : 'Pending' }}</span>
+        </li>
+      </ul>
+      <p *ngIf="!loadingPassengers && !passengers.length" class="empty-hint">No passengers booked.</p>
+    </section>
+
+    <section class="section" *ngIf="boardingConfirmations.length > 0">
+      <h2 class="section-title">Recent Boarding Confirmations</h2>
+      <div class="confirmations-list">
+        <div class="confirmation-item" *ngFor="let conf of boardingConfirmations">
+          <div class="conf-message">{{ conf.message }}</div>
+          <div class="conf-time">{{ conf.time | date: 'HH:mm:ss' }}</div>
+        </div>
+      </div>
+    </section>
+  </aside>
+
+  <main class="map-area">
+    <app-map [flightIdToTrack]="trackedFlightId" [flightNumber]="trackedFlightNumber"></app-map>
+  </main>
+</div>

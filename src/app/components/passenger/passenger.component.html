@@ -1,0 +1,88 @@
+<div class="passenger-layout">
+  <aside class="sidebar">
+    <header class="sidebar-header">
+      <div class="user-info">
+        <span class="role-badge passenger">PASSENGER</span>
+        <span class="username">{{ auth.user?.username }}</span>
+      </div>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </header>
+
+    <div class="error-msg" *ngIf="errorMessage" role="alert">⚠ {{ errorMessage }}</div>
+
+    <div class="info-msg" *ngIf="infoMessage" role="status">ℹ {{ infoMessage }}</div>
+
+    <section class="section">
+      <h2 class="section-title">My Flights</h2>
+      <div class="loading" *ngIf="loading">Loading flights...</div>
+      <ul class="flight-list" *ngIf="!loading">
+        <li
+          *ngFor="let flight of flights"
+          (click)="selectFlight(flight)"
+          [class.selected]="selectedFlight?.id === flight.id"
+        >
+          <div class="flight-number">{{ flight.flight_number }}</div>
+          <div class="flight-route">{{ flight.origin?.code }} → {{ flight.destination?.code }}</div>
+          <div class="flight-status" [class]="getFlightStatusClass(flight.status)">
+            {{ flight.status }}
+          </div>
+        </li>
+      </ul>
+    </section>
+
+    <section class="section" *ngIf="selectedFlight">
+      <h2 class="section-title">Flight Details</h2>
+      <div class="flight-details">
+        <div class="detail-row">
+          <span class="label">Flight:</span>
+          <span class="value">{{ selectedFlight.flight_number }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Route:</span>
+          <span class="value"
+            >{{ selectedFlight.origin?.code }} ({{ selectedFlight.origin?.city }}) →
+            {{ selectedFlight.destination?.code }} ({{ selectedFlight.destination?.city }})</span
+          >
+        </div>
+        <div class="detail-row">
+          <span class="label">Status:</span>
+          <span class="value" [class]="getFlightStatusClass(selectedFlight.status)">
+            {{ selectedFlight.status }}
+          </span>
+        </div>
+        <div class="detail-row" *ngIf="selectedFlight.seat_number">
+          <span class="label">Seat:</span>
+          <span class="value">{{ selectedFlight.seat_number }}</span>
+        </div>
+        <button class="track-btn" (click)="trackFlight()" [disabled]="!selectedFlight">
+          Track Flight
+        </button>
+      </div>
+    </section>
+  </aside>
+
+  <main class="map-area">
+    <app-map [flightIdToTrack]="trackedFlightId" [flightNumber]="trackedFlightNumber"></app-map>
+  </main>
+
+  <!-- Boarding Modal -->
+  <div class="modal-overlay" *ngIf="showBoardingModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>✈ Boarding Call</h3>
+        <button class="close-btn" (click)="closeBoardingModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Flight <strong>{{ boardingCall?.flight_number }}</strong> is now boarding!
+        </p>
+        <p class="countdown">
+          Time remaining: <strong>{{ boardingCountdown }}</strong> seconds
+        </p>
+        <button class="board-btn" (click)="confirmBoarding()" [disabled]="boardingConfirmed">
+          {{ boardingConfirmed ? '✓ Boarding Confirmed' : 'Confirm Boarding' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

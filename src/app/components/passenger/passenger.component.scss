@@ -1,0 +1,7 @@
+.passenger-layout{display:grid;grid-template-columns:340px 1fr;height:100vh;background:#07090f;color:#e2eaf6}
+.sidebar{background:#0f1623;padding:1rem;border-right:1px solid #1e2d45}
+.map-area{background:#0a0f1a;height:100vh}
+.flight-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:0.5rem}
+.flight-list li{padding:0.6rem;border-radius:6px;background:transparent;color:#e2eaf6}
+.flight-list li:hover{background:#071426;cursor:pointer}
+.section-title{font-size:0.95rem;color:#9fb3c8;margin-bottom:0.5rem}

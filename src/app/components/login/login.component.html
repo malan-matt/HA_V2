@@ -1,0 +1,33 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo-mark">✈</div>
+      <h1 class="title">SkyTrack</h1>
+      <p class="subtitle">Real-Time Flight Operations</p>
+    </div>
+    <form class="login-form" (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input id="username" type="text" [(ngModel)]="username" name="username" required />
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" [(ngModel)]="password" name="password" required />
+      </div>
+      <div class="field">
+        <label for="wsPort">WebSocket port</label>
+        <input
+          id="wsPort"
+          type="number"
+          [(ngModel)]="wsPort"
+          name="wsPort"
+          min="1024"
+          max="49151"
+          required
+        />
+      </div>
+      <div class="error-msg" *ngIf="errorMessage" role="alert">{{ errorMessage }}</div>
+      <button type="submit" class="login-btn" [disabled]="loading">{{ loading ? 'Connecting…' : 'Login' }}</button>
+    </form>
+  </div>
+</div>
